@@ -14,6 +14,7 @@ DRPDrugs.AmountYouGet = 1
 DRPDrugs.AmountToProduceOne = 2
 DRPDrugs.TimeToPickProduceSell = 2500
 DRPDrugs.DirtyMoney = 20 
+DRPDrugs.CokeAmount = 10
 
 ----------------------------------------------------------------------------------------------------------------------------------
 ----- Set blips on the map.
