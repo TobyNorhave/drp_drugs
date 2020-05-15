@@ -1,4 +1,4 @@
-# DRP_Drugs - A wonder of criminal drug activity.
+# DRP-Drugs - A wonder of criminal drug activity.
 A drug extention for DRP-Framwork by <a href="https://github.com/OfficialDarkzy" target="_blank">**OfficialDarkzy**</a>!
 
 Become a criminal. Pick as many drugs as you can carry.. Produce the drug you picked up.. Sell the drug to a dealer and earn big time CASH!!💸💸  
@@ -72,3 +72,4 @@ Become a criminal. Pick as many drugs as you can carry.. Produce the drug you pi
 ---
 
 # License
+[![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
