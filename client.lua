@@ -1,9 +1,7 @@
-local amountToGet = DRPDrugs.AmountYouGet
 local amountToProduce = DRPDrugs.AmountToProduceOne
 local time = DRPDrugs.TimeToPickProduceSell
 local dirtyMoney = DRPDrugs.DirtyMoney
 local isActive = false
-local amount = 0
 ----------------------------------------------------------------------------------------------------------------------------------
 ----- Creating blips on the map.
 ----------------------------------------------------------------------------------------------------------------------------------
@@ -20,9 +18,14 @@ Citizen.CreateThread(function()
     Citizen.Wait(1)
 end)
 
+----------------------------------------------------------------------------------------------------------------------------------
+----- FUCKING WORKS TOBY!! - DON'T TOUCH IT!!!!
+----------------------------------------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------------------------------------
+----- Start drug picking if backpack is not full.
+----------------------------------------------------------------------------------------------------------------------------------
 RegisterNetEvent("DRP_Drugs:DrugLocationPick")
 AddEventHandler("DRP_Drugs:DrugLocationPick", function(bool, amountToGet, type, cokeAmount)
-    amount = cokeAmount
     if bool then
         isActive = true
         exports['drp_progressBars']:startUI(time, "Picking "..type.." - X"..cokeAmount.." left")
@@ -38,11 +41,16 @@ AddEventHandler("DRP_Drugs:DrugLocationPick", function(bool, amountToGet, type, 
     isActive = false
 end)
 
+----------------------------------------------------------------------------------------------------------------------------------
+----- FUCKING WORKS TOBY!! - DON'T TOUCH IT!!!!
+----------------------------------------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------------------------------------
+----- Start auto drug picking if backpack is not full.
+----------------------------------------------------------------------------------------------------------------------------------
 RegisterNetEvent("DRP_Drugs:DrugLocationPickAuto")
 AddEventHandler("DRP_Drugs:DrugLocationPickAuto", function(bool, amountToGet, type, cokeAmount)
-    amount = cokeAmount
     if bool then
-        while amount ~= 0 do
+         while cokeAmount ~= 0 do
             isActive = true
             exports['drp_progressBars']:startUI(time, "Picking "..type.." - X"..cokeAmount.." left")
             TaskStartScenarioInPlace(PlayerPedId(), 'PROP_HUMAN_PARKING_METER', 0, true)
@@ -50,9 +58,9 @@ AddEventHandler("DRP_Drugs:DrugLocationPickAuto", function(bool, amountToGet, ty
             ClearPedTasksImmediately(GetPlayerPed(-1))
             TriggerEvent("DRP_Core:Success", type, tostring("You got "..amountToGet.."g "..type),2500,false,"leftCenter")
             print(tostring(cokeAmount))
-            amount = -1 ---------------------------------------------------------
+            Citizen.Wait(5)
+            cokeAmount = cokeAmount - amountToGet
         end
-        Citizen.Wait(200)
     else
         isActive = false
         TriggerEvent("DRP_Core:Error", type, tostring("Your backpack is full!"),2500,false,"leftCenter")
@@ -60,6 +68,9 @@ AddEventHandler("DRP_Drugs:DrugLocationPickAuto", function(bool, amountToGet, ty
     isActive = false
 end)
 
+----------------------------------------------------------------------------------------------------------------------------------
+----- FUCKING WORKS TOBY!! - DON'T TOUCH IT!!!!
+----------------------------------------------------------------------------------------------------------------------------------
 ----------------------------------------------------------------------------------------------------------------------------------
 ----- Drug locations.
 ----------------------------------------------------------------------------------------------------------------------------------
@@ -75,9 +86,9 @@ Citizen.CreateThread(function()
                 exports['drp_core']:DrawText3Ds(DRPDrugs.Locations[i].x, DRPDrugs.Locations[i].y, DRPDrugs.Locations[i].z + 0.5, tostring("~b~[E]~w~ Pick "..DRPDrugs.Locations[i].type.."\n~g~[Q]~w~ Keep picking "..DRPDrugs.Locations[i].type))
                 if isActive == false then
                     if IsControlJustPressed(1, 86) then
-                        TriggerServerEvent("DRP_Drugs:PickProduceDrug", amountToGet, DRPDrugs.Locations[i].type)
+                        TriggerServerEvent("DRP_Drugs:PickProduceDrug", DRPDrugs.Locations[i].type)
                     elseif IsControlJustPressed(1, 44)then
-                        TriggerServerEvent("DRP_Drugs:PickProduceDrugAuto", amountToGet, DRPDrugs.Locations[i].type)
+                        TriggerServerEvent("DRP_Drugs:PickProduceDrugAuto", DRPDrugs.Locations[i].type)
                     end
                 end
             end
@@ -86,6 +97,10 @@ Citizen.CreateThread(function()
     end
 end)
 
+
+----------------------------------------------------------------------------------------------------------------------------------
+----- GOTTA BE REFACTORET! - Gotte simplify stuff before release
+----------------------------------------------------------------------------------------------------------------------------------
 -- Citizen.CreateThread(function()
 --     local sleepTimer = 1000
 --     while true do
