@@ -188,9 +188,9 @@ AddEventHandler("DRP_Drugs:DrugLocationPickAuto", function(bool, amountToGet, ty
             print(tostring(cokeAmount))
             Citizen.Wait(100)
             cokeAmount = cokeAmount - amountToGet
-            drugReviced = amountToGet +1
+            drugReviced = drugReviced + amountToGet
             if isPressed then
-                TriggerServerEvent("DRP_Drugs:AmountWhenQuitAnim", cokeAmount, type)
+                TriggerServerEvent("DRP_Drugs:AmountWhenQuitAnim", drugReviced, cokeAmount, type)
                 Citizen.Wait(100)
                 cokeAmount = 0
                 ClearPedTasksImmediately(GetPlayerPed(-1))
