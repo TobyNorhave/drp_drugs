@@ -1,4 +1,3 @@
-local amountToProduce = DRPDrugs.AmountToProduceOne
 local isActive = false
 local isPressed = false
 ----------------------------------------------------------------------------------------------------------------------------------
@@ -107,19 +106,48 @@ end)
 ----- Start production if backpack is not full and item is available.
 ----------------------------------------------------------------------------------------------------------------------------------
 RegisterNetEvent("DRP_Drugs:DrugLocationProd")
-AddEventHandler("DRP_Drugs:DrugLocationProd", function(bool, amountToGet, type, backpackSpace, timeToDoStuff)
+AddEventHandler("DRP_Drugs:DrugLocationProd", function(bool, amountToGet, type, canProduce, timeToDoStuff)
     if bool then
         isActive = true
-        exports['drp_progressBars']:startUI(timeToDoStuff, "Picking "..type.." - X"..backpackSpace.." left")
+        exports['drp_progressBars']:startUI(timeToDoStuff, "Producing "..type.." - X"..canProduce.." left")
         TaskStartScenarioInPlace(PlayerPedId(), 'PROP_HUMAN_PARKING_METER', 0, true)
         Citizen.Wait(timeToDoStuff)
         ClearPedTasksImmediately(GetPlayerPed(-1))
         TriggerEvent("DRP_Core:Success", type, tostring("You got "..amountToGet.."g "..type),2500,false,"leftCenter")
-        print(tostring(backpackSpace))
+        print(tostring(canProduce))
     end
     isActive = false
 end)
 
+----------------------------------------------------------------------------------------------------------------------------------
+----- Start auto producing if backpack is not full.
+----------------------------------------------------------------------------------------------------------------------------------
+RegisterNetEvent("DRP_Drugs:DrugLocationProdAuto")
+AddEventHandler("DRP_Drugs:DrugLocationProdAuto", function(bool, amountToGet, type, canProduce, timeToDoStuff)
+    local drugReviced = 0
+    if bool then
+         while canProduce ~= 0 do
+            isActive = true
+            exports['drp_progressBars']:startUI(timeToDoStuff, "Producing "..type.." - X"..canProduce.." left")
+            TaskStartScenarioInPlace(PlayerPedId(), 'PROP_HUMAN_PARKING_METER', 0, true)
+            Citizen.Wait(timeToDoStuff)
+            ClearPedTasksImmediately(GetPlayerPed(-1))
+            TriggerEvent("DRP_Core:Success", type, tostring("You got "..amountToGet.."g "..type),2500,false,"leftCenter")
+            print(tostring(canProduce))
+            Citizen.Wait(100)
+            canProduce = canProduce - amountToGet
+            drugReviced = drugReviced + amountToGet
+            if isPressed then
+                TriggerServerEvent("DRP_Drugs:AmountWhenQuitAutoProd", drugReviced, canProduce, type)
+                Citizen.Wait(100)
+                canProduce = 0
+                ClearPedTasksImmediately(GetPlayerPed(-1))
+            end
+        end
+    end
+    isPressed = false
+    isActive = false
+end)
 
 ----------------------------------------------------------------------------------------------------------------------------------
 ----- GOTTA BE REFACTORET! - Gotte simplify stuff before release
@@ -137,21 +165,12 @@ Citizen.CreateThread(function()
             if distance <= 2.0 then
                 sleepTimer = 5
                 exports['drp_core']:DrawText3Ds(DRPDrugs.Productions[i].x, DRPDrugs.Productions[i].y, DRPDrugs.Productions[i].z + 0.5, tostring("~b~[E]~w~ Produce "..DRPDrugs.Productions[i].type.."\n~g~[Q]~w~ Keep producing "..DRPDrugs.Productions[i].type))
-                if IsControlJustPressed(1, 86) then
-                    exports['drp_progressBars']:startUI(time, "Producing "..DRPDrugs.Productions[i].type)
-                    TaskStartScenarioInPlace(PlayerPedId(), 'PROP_HUMAN_PARKING_METER', 0, true)
-                    Citizen.Wait(time)
-                    ClearPedTasksImmediately(GetPlayerPed(-1))
-                    --NEEDS TO BE CHANGED
-                    TriggerEvent("DRP_Core:Success", DRPDrugs.Productions[i].type, tostring("You got "..amountToGet.."g "..DRPDrugs.Productions[i].type.. " for "..amountToProduce),2500,false,"leftCenter")
-                elseif IsControlJustPressed(1, 44) then
-                    --NEEDS TO BE CHANGED
-                    exports['drp_progressBars']:startUI(time, "Producing "..DRPDrugs.Productions[i].type)
-                    TaskStartScenarioInPlace(PlayerPedId(), 'PROP_HUMAN_PARKING_METER', 0, true)
-                    Citizen.Wait(time)
-                    ClearPedTasksImmediately(GetPlayerPed(-1))
-                    --NEEDS TO BE CHANGED
-                    TriggerEvent("DRP_Core:Success", DRPDrugs.Productions[i].type, tostring("You got "..amountToGet.."g "..DRPDrugs.Productions[i].type.. " for "..amountToProduce),2500,false,"leftCenter")
+                if isActive == false then
+                    if IsControlJustPressed(1, 86) then
+                        TriggerServerEvent("DRP_Drugs:ProdDrug", DRPDrugs.Productions[i].type)
+                    elseif IsControlJustPressed(1, 44) then
+                        TriggerServerEvent("DRP_Drugs:ProdDrugAuto", DRPDrugs.Productions[i].type)
+                    end
                 end
             end
         end

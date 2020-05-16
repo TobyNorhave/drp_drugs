@@ -15,8 +15,8 @@ DRPDrugs.AmountToProduceOne = 2
 DRPDrugs.TimeToPickProduceSell = 2500
 DRPDrugs.DirtyMoney = 20 
 
-DRPDrugs.BackpackSpace = 10
-DRPDrugs.BackpackRecived = 0
+DRPDrugs.BackpackSpace = 0
+DRPDrugs.BackpackRecived = 10
 ----------------------------------------------------------------------------------------------------------------------------------
 ----- Set blips on the map.
 ----------------------------------------------------------------------------------------------------------------------------------
