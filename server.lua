@@ -1,6 +1,7 @@
 local amountToGet = DRPDrugs.AmountYouGet
 local amountToProd = DRPDrugs.AmountToProduceOne
 local timeToDoStuff = DRPDrugs.TimeToPickProduceSell
+
 ----------------------------------------------------------------------------------------------------------------------------------
 ----- Send Blips and locations to player.
 ----------------------------------------------------------------------------------------------------------------------------------
@@ -13,7 +14,7 @@ AddEventHandler("DRP_Drugs:InitAll", function()
 end)
 
 ----------------------------------------------------------------------------------------------------------------------------------
------ Pick and calculate backpackspace.
+----- Pick drug from location.
 ----------------------------------------------------------------------------------------------------------------------------------
 RegisterServerEvent("DRP_Drugs:PickDrug")
 AddEventHandler("DRP_Drugs:PickDrug", function(type, pick, auto)
@@ -22,12 +23,12 @@ AddEventHandler("DRP_Drugs:PickDrug", function(type, pick, auto)
     if pick then
         TriggerClientEvent("DRP_Drugs:DrugLocationPick", player.charid, true, false, amountToGet, type, timeToDoStuff)
     elseif auto then
-        TriggerClientEvent("DRP_Drugs:DrugLocationPick", player.charid, true, true, amountToGet, type, timeToDoStuff)
+        TriggerClientEvent("DRP_Drugs:DrugLocationPick", player.charid, false, true, amountToGet, type, timeToDoStuff)
     end
 end)
 
 ----------------------------------------------------------------------------------------------------------------------------------
------ Produce and calculate backpackspace.
+----- Produce drug from location.
 ----------------------------------------------------------------------------------------------------------------------------------
 RegisterServerEvent("DRP_Drugs:ProdDrug")
 AddEventHandler("DRP_Drugs:ProdDrug", function(type, use, prod, auto)
@@ -36,10 +37,13 @@ AddEventHandler("DRP_Drugs:ProdDrug", function(type, use, prod, auto)
     if prod then
         TriggerClientEvent("DRP_Drugs:DrugLocationProd", player.charid, true, false, amountToGet, amountToProd, type, use, timeToDoStuff)
     elseif auto then
-        TriggerClientEvent("DRP_Drugs:DrugLocationProd", player.charid, true, true, amountToGet, amountToProd, type, use, timeToDoStuff)
+        TriggerClientEvent("DRP_Drugs:DrugLocationProd", player.charid, false, true, amountToGet, amountToProd, type, use, timeToDoStuff)
     end
 end)
 
+----------------------------------------------------------------------------------------------------------------------------------
+----- Sell drugs to dealer.
+----------------------------------------------------------------------------------------------------------------------------------
 RegisterServerEvent("DRP_Drugs:SellDrug")
 AddEventHandler("DRP_Drugs:SellDrug", function(type, price, prod, auto)
     local src = source
@@ -47,6 +51,6 @@ AddEventHandler("DRP_Drugs:SellDrug", function(type, price, prod, auto)
     if prod then
         TriggerClientEvent("DRP_Drugs:SellLocationDrug", player.charid, true, false, amountToGet, price, type, timeToDoStuff)
     elseif auto then
-        TriggerClientEvent("DRP_Drugs:SellLocationDrug", player.charid, true, true, amountToGet, price, type, timeToDoStuff)
+        TriggerClientEvent("DRP_Drugs:SellLocationDrug", player.charid, false, true, amountToGet, price, type, timeToDoStuff)
     end
 end)

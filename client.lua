@@ -18,7 +18,6 @@ local blips = {
 Citizen.CreateThread(function()
     TriggerServerEvent("DRP_Drugs:InitAll")
 end)
-
 RegisterNetEvent("DRP_Drugs:Init")
 AddEventHandler("DRP_Drugs:Init", function(drug, prod, sell)
     drugLoactions = drug
@@ -41,49 +40,6 @@ Citizen.CreateThread(function()
         EndTextCommandSetBlipName(blip)
     end
     Citizen.Wait(1)
-end)
-
-----------------------------------------------------------------------------------------------------------------------------------
------ Server & Client shite.
-----------------------------------------------------------------------------------------------------------------------------------
-RegisterCommand("stop", function()
-    isPressed = true
-end, false)
-
-----------------------------------------------------------------------------------------------------------------------------------
------ Start picking
-----------------------------------------------------------------------------------------------------------------------------------
-RegisterNetEvent("DRP_Drugs:DrugLocationPick")
-AddEventHandler("DRP_Drugs:DrugLocationPick", function(pick, auto, amountToGet, type, timeToDoStuff)
-    local sleeper = 100
-    local itemCounter = 0
-    if pick and auto then
-        while isPressed == false do 
-            isActive = true
-            exports['drp_progressBars']:startUI(timeToDoStuff, "Picking "..type.." - X"..amountToGet)
-            TaskStartScenarioInPlace(PlayerPedId(), 'PROP_HUMAN_PARKING_METER', 0, true)
-            Citizen.Wait(timeToDoStuff)
-            ClearPedTasksImmediately(GetPlayerPed(-1))
-            TriggerServerEvent("DRP_Inventory:addInventoryItem", type, amountToGet)
-            TriggerEvent("DRP_Core:Success", type, tostring("You got "..amountToGet.."g "..type),2500,false,"leftCenter")
-            itemCounter = itemCounter + amountToGet
-            if isPressed then
-                TriggerEvent("DRP_Core:Info", type, tostring("You got "..itemCounter.."g "..type),2500,false,"leftCenter")
-            end
-            Citizen.Wait(sleeper)
-        end
-    elseif pick then
-        isActive = true
-        exports['drp_progressBars']:startUI(timeToDoStuff, "Picking "..type.." - X"..amountToGet)
-        TaskStartScenarioInPlace(PlayerPedId(), 'PROP_HUMAN_PARKING_METER', 0, true)
-        Citizen.Wait(timeToDoStuff)
-        ClearPedTasksImmediately(GetPlayerPed(-1))
-        TriggerServerEvent("DRP_Inventory:addInventoryItem", type, amountToGet)
-        TriggerEvent("DRP_Core:Success", type, tostring("You got "..amountToGet.."g "..type),2500,false,"leftCenter")
-        Citizen.Wait(sleeper)
-    end
-    isPressed = false
-    isActive = false
 end)
 
 ----------------------------------------------------------------------------------------------------------------------------------
@@ -113,44 +69,6 @@ Citizen.CreateThread(function()
 end)
 
 ----------------------------------------------------------------------------------------------------------------------------------
------ Start production
-----------------------------------------------------------------------------------------------------------------------------------
-RegisterNetEvent("DRP_Drugs:DrugLocationProd")
-AddEventHandler("DRP_Drugs:DrugLocationProd", function(prod, auto, amountToGet, amountToProd, type, use, timeToDoStuff)
-    local sleeper = 100
-    local itemCounter = 0
-    if prod and auto then
-        while isPressed == false do 
-            isActive = true
-            exports['drp_progressBars']:startUI(timeToDoStuff, "Producing "..type.." - X"..amountToGet)
-            TaskStartScenarioInPlace(PlayerPedId(), 'PROP_HUMAN_PARKING_METER', 0, true)
-            Citizen.Wait(timeToDoStuff)
-            ClearPedTasksImmediately(GetPlayerPed(-1))
-            TriggerServerEvent("DRP_Inventory:removeInventoryItem", use, amountToProd)
-            TriggerServerEvent("DRP_Inventory:addInventoryItem", type, amountToGet)
-            TriggerEvent("DRP_Core:Success", type, tostring("You got "..amountToGet.."g "..type),2500,false,"leftCenter")
-            itemCounter = itemCounter + amountToGet
-            if isPressed then
-                TriggerEvent("DRP_Core:Info", type, tostring("You got "..itemCounter.."g "..type),2500,false,"leftCenter")
-            end
-            Citizen.Wait(sleeper)
-        end
-    elseif prod then
-        isActive = true
-        exports['drp_progressBars']:startUI(timeToDoStuff, "Producing "..type.." - X"..amountToGet)
-        TaskStartScenarioInPlace(PlayerPedId(), 'PROP_HUMAN_PARKING_METER', 0, true)
-        Citizen.Wait(timeToDoStuff)
-        ClearPedTasksImmediately(GetPlayerPed(-1))
-        TriggerServerEvent("DRP_Inventory:addInventoryItem", type, amountToGet)
-        TriggerEvent("DRP_Core:Success", type, tostring("You got "..amountToGet.."g "..type),2500,false,"leftCenter")
-        Citizen.Wait(sleeper)
-    end
-    isPressed = false
-    isActive = false
-end)
-
-
-----------------------------------------------------------------------------------------------------------------------------------
 ----- Getting productions.
 ----------------------------------------------------------------------------------------------------------------------------------
 Citizen.CreateThread(function()
@@ -176,38 +94,8 @@ Citizen.CreateThread(function()
     end
 end)
 
-
-RegisterNetEvent("DRP_Drugs:SellLocationDrug")
-AddEventHandler("DRP_Drugs:SellLocationDrug", function(sell, auto, amountToGet, price, type, timeToDoStuff)
-    local sleeper = 100
-    local itemCounter = 0
-    local cashRecived = 0
-    if sell and auto then
-        while isPressed == false do 
-            isActive = true
-            exports['drp_progressBars']:startUI(timeToDoStuff, "Selling "..type.." - X"..amountToGet)
-            TaskStartScenarioInPlace(PlayerPedId(), 'PROP_HUMAN_PARKING_METER', 0, true)
-            Citizen.Wait(timeToDoStuff)
-            ClearPedTasksImmediately(GetPlayerPed(-1))
-            TriggerServerEvent("DRP_Inventory:removeInventoryItem", type, amountToGet)
-            --- TriggerEvent("DRP", ) -----
-            TriggerEvent("DRP_Core:Success", type, tostring("You got "..price.."$ for "..amountToGet.."g "..type),2500,false,"leftCenter")
-            itemCounter = itemCounter + amountToGet
-            cashRecived = cashRecived + price
-            if isPressed then
-                TriggerEvent("DRP_Core:Info", type, tostring("You got "..cashRecived.."$ for "..itemCounter.."g "..type),2500,false,"leftCenter")
-            end
-            Citizen.Wait(sleeper)
-        end
-    elseif prod then
-        print("Hello Bob")
-    end
-    isPressed = false
-    isActive = false
-end)
-
 ----------------------------------------------------------------------------------------------------------------------------------
------ Getting SellLocations
+----- Getting sell locations
 ----------------------------------------------------------------------------------------------------------------------------------
 Citizen.CreateThread(function()
     local sleepTimer=1000
@@ -233,27 +121,145 @@ end)
 ----------------------------------------------------------------------------------------------------------------------------------
 ----- Peds for Drug sell locations.
 ----------------------------------------------------------------------------------------------------------------------------------
-Citizen.CreateThread(function()
-    local sleeper = 10
-    --for k,v in pairs(sellLocations) do
-    for i = 1, #DRPDrugs.SellLocations do
-        local lmodel = (DRPDrugs.SellLocations[i].ishash) and DRPDrugs.SellLocations[i].model or GetHashKey(DRPDrugs.SellLocations[i].model)
-        RequestModel(DRPDrugs.SellLocations[i].ishash)
-        print(lmodel)
-        while not HasModelLoaded(lmodel) do
-            Wait(sleeper)
+-- Citizen.CreateThread(function()
+--     local sleeper = 10
+--     for k,v in pairs(sellLocations) do
+--         local lmodel = (v.ishash) and v.model or GetHashKey(v.model)
+--         RequestModel(v.ishash)
+--         print(lmodel)
+--         while not HasModelLoaded(lmodel) do
+--             Wait(sleeper)
+--         end
+--         local lPed = CreatePed(4, lmodel, v.x, v.y, v.z, v.h, false, false)
+--         SetEntityInvincible(lPed, true)
+--         FreezeEntityPosition(lPed, true)
+--         SetBlockingOfNonTemporaryEvents(lPed, true)
+--         --SetAmbientVoiceName(lPed, v.voice)
+--         if v.dict ~= nil then
+--             loadAnimDict(v.dict)
+--             TaskPlayAnim(lPed, v.dict, false, 8.0, 0.0, -1, 1, 0, 0, 0, 0)
+--         else
+--             TaskStartScenarioInPlace(lPed, "WORLD_HUMAN_STAND_IMPATIENT_UPRIGHT", 0, 0)
+--         end
+--         SetModelAsNoLongerNeeded(lmodel)
+--     end
+-- end)
+
+----------------------------------------------------------------------------------------------------------------------------------
+----- Start picking
+----------------------------------------------------------------------------------------------------------------------------------
+RegisterNetEvent("DRP_Drugs:DrugLocationPick")
+AddEventHandler("DRP_Drugs:DrugLocationPick", function(pick, auto, amountToGet, type, timeToDoStuff)
+    local sleeper = 100
+    local itemCounter = 0
+    if pick then
+        isActive = true
+        exports['drp_progressBars']:startUI(timeToDoStuff, "Picking "..type.." - X"..amountToGet)
+        TaskStartScenarioInPlace(PlayerPedId(), 'PROP_HUMAN_PARKING_METER', 0, true)
+        Citizen.Wait(timeToDoStuff)
+        ClearPedTasksImmediately(GetPlayerPed(-1))
+        TriggerServerEvent("DRP_Inventory:addInventoryItem", type, amountToGet)
+        TriggerEvent("DRP_Core:Success", type, tostring("You got "..amountToGet.."g "..type),2500,false,"leftCenter")
+        Citizen.Wait(sleeper)
+    elseif auto then
+        while isPressed == false do 
+            isActive = true
+            exports['drp_progressBars']:startUI(timeToDoStuff, "Picking "..type.." - X"..amountToGet)
+            TaskStartScenarioInPlace(PlayerPedId(), 'PROP_HUMAN_PARKING_METER', 0, true)
+            Citizen.Wait(timeToDoStuff)
+            ClearPedTasksImmediately(GetPlayerPed(-1))
+            TriggerServerEvent("DRP_Inventory:addInventoryItem", type, amountToGet)
+            TriggerEvent("DRP_Core:Success", type, tostring("You got "..amountToGet.."g "..type),2500,false,"leftCenter")
+            itemCounter = itemCounter + amountToGet
+            if isPressed then
+                TriggerEvent("DRP_Core:Info", type, tostring("You got "..itemCounter.."g "..type),2500,false,"leftCenter")
+            end
+            Citizen.Wait(sleeper)
         end
-        local lPed = CreatePed(4, lmodel, DRPDrugs.SellLocations[i].x, DRPDrugs.SellLocations[i].y, DRPDrugs.SellLocations[i].z, DRPDrugs.SellLocations[i].h, false, false)
-        SetEntityInvincible(lPed, true)
-        FreezeEntityPosition(lPed, true)
-        SetBlockingOfNonTemporaryEvents(lPed, true)
-        --SetAmbientVoiceName(lPed, v.voice)
-        if v.dict ~= nil then
-            loadAnimDict(DRPDrugs.SellLocations[i].dict)
-            TaskPlayAnim(lPed, DRPDrugs.SellLocations[i].dict, false, 8.0, 0.0, -1, 1, 0, 0, 0, 0)
-        else
-            TaskStartScenarioInPlace(lPed, "WORLD_HUMAN_STAND_IMPATIENT_UPRIGHT", 0, 0)
-        end
-        SetModelAsNoLongerNeeded(lmodel)
     end
+    isPressed = false
+    isActive = false
 end)
+
+----------------------------------------------------------------------------------------------------------------------------------
+----- Start production
+----------------------------------------------------------------------------------------------------------------------------------
+RegisterNetEvent("DRP_Drugs:DrugLocationProd")
+AddEventHandler("DRP_Drugs:DrugLocationProd", function(prod, auto, amountToGet, amountToProd, type, use, timeToDoStuff)
+    local sleeper = 100
+    local itemCounter = 0
+    if prod then
+        isActive = true
+        exports['drp_progressBars']:startUI(timeToDoStuff, "Producing "..type.." - X"..amountToGet)
+        TaskStartScenarioInPlace(PlayerPedId(), 'PROP_HUMAN_PARKING_METER', 0, true)
+        Citizen.Wait(timeToDoStuff)
+        ClearPedTasksImmediately(GetPlayerPed(-1))
+        TriggerServerEvent("DRP_Inventory:addInventoryItem", type, amountToGet)
+        TriggerEvent("DRP_Core:Success", type, tostring("You got "..amountToGet.."g "..type),2500,false,"leftCenter")
+        Citizen.Wait(sleeper)
+    elseif auto then
+        while isPressed == false do 
+            isActive = true
+            exports['drp_progressBars']:startUI(timeToDoStuff, "Producing "..type.." - X"..amountToGet)
+            TaskStartScenarioInPlace(PlayerPedId(), 'PROP_HUMAN_PARKING_METER', 0, true)
+            Citizen.Wait(timeToDoStuff)
+            ClearPedTasksImmediately(GetPlayerPed(-1))
+            TriggerServerEvent("DRP_Inventory:removeInventoryItem", use, amountToProd)
+            TriggerServerEvent("DRP_Inventory:addInventoryItem", type, amountToGet)
+            TriggerEvent("DRP_Core:Success", type, tostring("You got "..amountToGet.."g "..type),2500,false,"leftCenter")
+            itemCounter = itemCounter + amountToGet
+            if isPressed then
+                TriggerEvent("DRP_Core:Info", type, tostring("You got "..itemCounter.."g "..type),2500,false,"leftCenter")
+            end
+            Citizen.Wait(sleeper)
+        end
+    end
+    isPressed = false
+    isActive = false
+end)
+
+----------------------------------------------------------------------------------------------------------------------------------
+----- Start selling
+----------------------------------------------------------------------------------------------------------------------------------
+RegisterNetEvent("DRP_Drugs:SellLocationDrug")
+AddEventHandler("DRP_Drugs:SellLocationDrug", function(sell, auto, amountToGet, price, type, timeToDoStuff)
+    local sleeper = 100
+    local itemCounter = 0
+    local cashRecived = 0
+    if sell then
+        exports['drp_progressBars']:startUI(timeToDoStuff, "Selling "..type.." - X"..amountToGet)
+            TaskStartScenarioInPlace(PlayerPedId(), 'PROP_HUMAN_PARKING_METER', 0, true)
+            Citizen.Wait(timeToDoStuff)
+            ClearPedTasksImmediately(GetPlayerPed(-1))
+            TriggerServerEvent("DRP_Inventory:removeInventoryItem", type, amountToGet)
+            --- TriggerEvent("DRP", ) -----
+            TriggerEvent("DRP_Core:Success", type, tostring("You got "..price.."$ for "..amountToGet.."g "..type),2500,false,"leftCenter")
+            Citizen.Wait(sleeper)
+    elseif auto then
+        while isPressed == false do 
+            isActive = true
+            exports['drp_progressBars']:startUI(timeToDoStuff, "Selling "..type.." - X"..amountToGet)
+            TaskStartScenarioInPlace(PlayerPedId(), 'PROP_HUMAN_PARKING_METER', 0, true)
+            Citizen.Wait(timeToDoStuff)
+            ClearPedTasksImmediately(GetPlayerPed(-1))
+            TriggerServerEvent("DRP_Inventory:removeInventoryItem", type, amountToGet)
+            --- TriggerEvent("DRP", ) -----
+            TriggerEvent("DRP_Core:Success", type, tostring("You got "..price.."$ for "..amountToGet.."g "..type),2500,false,"leftCenter")
+            itemCounter = itemCounter + amountToGet
+            cashRecived = cashRecived + price
+            if isPressed then
+                TriggerEvent("DRP_Core:Info", type, tostring("You got "..cashRecived.."$ for "..itemCounter.."g "..type),2500,false,"leftCenter")
+            end
+            Citizen.Wait(sleeper)
+        end
+    end
+    isPressed = false
+    isActive = false
+end)
+
+----------------------------------------------------------------------------------------------------------------------------------
+----- Commands / the only one ^^
+----------------------------------------------------------------------------------------------------------------------------------
+RegisterCommand("stop", function()
+    isPressed = true
+end, false)
