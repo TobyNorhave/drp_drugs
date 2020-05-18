@@ -2,7 +2,6 @@ DRPDrugs = {}
 ----------------------------------------------------------------------------------------------------------------------------------
 ----- NEEDS TO BE HERE!!
 ----------------------------------------------------------------------------------------------------------------------------------
-DRPDrugs.Blips = {}
 DRPDrugs.Locations = {}
 DRPDrugs.Productions = {}
 DRPDrugs.SellLocations = {}
@@ -10,23 +9,12 @@ DRPDrugs.SellLocations = {}
 ----------------------------------------------------------------------------------------------------------------------------------
 ----- Set the values as you like.
 ----------------------------------------------------------------------------------------------------------------------------------
-DRPDrugs.AmountYouGet = 1
-DRPDrugs.AmountToProduceOne = 2
-DRPDrugs.TimeToPickProduceSell = 2500
-DRPDrugs.DirtyMoney = 20 
-
-DRPDrugs.BackpackSpace = 0
-DRPDrugs.BackpackRecived = 10
-----------------------------------------------------------------------------------------------------------------------------------
------ Set blips on the map.
-----------------------------------------------------------------------------------------------------------------------------------
-DRPDrugs.Blips = {
-    {x =360.27, y =6479.0, z =29.36, blipId = 403, name = "Coke Field"},
-    {x = 1391.89, y =3605.6, z =38.94, blipId = 514, name = "Coke Production"}
-}
+DRPDrugs.AmountYouGet = 1 -- This is the amount you get when you pick/produce the drug.
+DRPDrugs.AmountToProduceOne = 2 -- This is the amount it takes to produce one drug.
+DRPDrugs.TimeToPickProduceSell = 2500 -- This is the time it takes to Pick, Produce, And sell in msec.
 
 ----------------------------------------------------------------------------------------------------------------------------------
------ Set drug locations. 
+----- Set drug locations. Remember to set blips accordingly in `client.lua`.
 ----------------------------------------------------------------------------------------------------------------------------------
 DRPDrugs.Locations = {
     {x=363.41296386718, y=6483.2626953125, z=29.18021774292, type = "Cokeleaf"},
@@ -45,15 +33,15 @@ DRPDrugs.Locations = {
 }
 
 ----------------------------------------------------------------------------------------------------------------------------------
------ Set production sites.
+----- Set production sites. Remember to set blips accordingly in `client.lua`.
 ----------------------------------------------------------------------------------------------------------------------------------
 DRPDrugs.Productions = {
-    {x = 1391.89, y =3605.6, z =38.94, type = "Coke"}
+    {x = 1391.89, y =3605.6, z =38.94, type = "Coke", use = "Cokeleaf"}
 }
 
 ----------------------------------------------------------------------------------------------------------------------------------
------ Set peds for selling drugs.
+----- Set peds for drug dealing. Remember to set blips accordingly in `client.lua`. (If you will)
 ----------------------------------------------------------------------------------------------------------------------------------
 DRPDrugs.SellLocations = {
-    {x =-1645.63, y =-986.98, z =7.33, h =359.79, model= "a_m_m_og_boss_01", anim="base", voice="S_M_M_HAIRDRESSER_01_BLACK_MINI_01", type = "Coke"}
+    {x =-1645.63, y =-971.08, z = 7.69, h = 3.45, model= "a_m_m_og_boss_01", voice="S_M_M_HAIRDRESSER_01_BLACK_MINI_01", type = "Coke", price = 120}
 }

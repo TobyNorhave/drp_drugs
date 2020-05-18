@@ -1,18 +1,45 @@
 local isActive = false
 local isPressed = false
-----------------------------------------------------------------------------------------------------------------------------------
+local drugLoactions = {}
+local productionLocations = {}
+local sellLocations = {}
+-----------------------------------------------------------------------------------------------------------------------------------
+----- Set you're blips here.
+-----------------------------------------------------------------+-----------------------------------------------------------------
+local blips = { 
+    {x =360.27, y =6479.0, z =29.36, blipId = 403, name = "Coke Field"},
+    {x = 1391.89, y =3605.6, z =38.94, blipId = 514, name = "Coke Production"}
+}
+
+-----------------------------------------------------------------------------------------------------------------------------------
+----- ONLY TOUCH SHIT HERE, IF YOU KNOW WHAT YOU'RE DOING!
 ----- Creating blips on the map.
-----------------------------------------------------------------------------------------------------------------------------------
+-----------------------------------------------------------------+-----------------------------------------------------------------
 Citizen.CreateThread(function()
-        for i=1, #DRPDrugs.Blips do
-            local blip = AddBlipForCoord(DRPDrugs.Blips[i].x, DRPDrugs.Blips[i].y, DRPDrugs.Blips[i].z)
-            SetBlipSprite(blip, DRPDrugs.Blips[i].blipId)
-            SetBlipAsShortRange(blip, true)
-            SetBlipScale(blip, 0.8)
-            BeginTextCommandSetBlipName('STRING')
-            AddTextComponentSubstringPlayerName(DRPDrugs.Blips[i].name)
-            EndTextCommandSetBlipName(blip)
-        end
+    TriggerServerEvent("DRP_Drugs:InitAll")
+end)
+
+RegisterNetEvent("DRP_Drugs:Init")
+AddEventHandler("DRP_Drugs:Init", function(drug, prod, sell)
+    drugLoactions = drug
+    productionLocations = prod
+    sellLocations = sell
+end)
+
+-----------------------------------------------------------------------------------------------------------------------------------
+----- Sets blips on the map.
+-----------------------------------------------------------------+-----------------------------------------------------------------
+Citizen.CreateThread(function()
+    for k, v in pairs(blips) do
+        local blip = AddBlipForCoord(v.x, v.y, v.z)
+        print(v.x)
+        SetBlipSprite(blip, v.blipId)
+        SetBlipAsShortRange(blip, true)
+        SetBlipScale(blip, 0.8)
+        BeginTextCommandSetBlipName('STRING')
+        AddTextComponentSubstringPlayerName(v.name)
+        EndTextCommandSetBlipName(blip)
+    end
     Citizen.Wait(1)
 end)
 
@@ -24,76 +51,59 @@ RegisterCommand("stop", function()
 end, false)
 
 ----------------------------------------------------------------------------------------------------------------------------------
------ Start picking if backpack is not full.
+----- Start picking
 ----------------------------------------------------------------------------------------------------------------------------------
 RegisterNetEvent("DRP_Drugs:DrugLocationPick")
-AddEventHandler("DRP_Drugs:DrugLocationPick", function(bool, amountToGet, type, backpackSpace, timeToDoStuff)
-    if bool then
-        isActive = true
-        exports['drp_progressBars']:startUI(timeToDoStuff, "Picking "..type.." - X"..backpackSpace.." left")
-        TaskStartScenarioInPlace(PlayerPedId(), 'PROP_HUMAN_PARKING_METER', 0, true)
-        Citizen.Wait(timeToDoStuff)
-        ClearPedTasksImmediately(GetPlayerPed(-1))
-        TriggerEvent("DRP_Core:Success", type, tostring("You got "..amountToGet.."g "..type),2500,false,"leftCenter")
-        print(tostring(backpackSpace))
-    end
-    isActive = false
-end)
-
-----------------------------------------------------------------------------------------------------------------------------------
------ FUCKING WORKS TOBY!! - DON'T TOUCH IT!!!!
-----------------------------------------------------------------------------------------------------------------------------------
-----------------------------------------------------------------------------------------------------------------------------------
------ Start auto picking if backpack is not full.
-----------------------------------------------------------------------------------------------------------------------------------
-RegisterNetEvent("DRP_Drugs:DrugLocationPickAuto")
-AddEventHandler("DRP_Drugs:DrugLocationPickAuto", function(bool, amountToGet, type, backpackSpace, timeToDoStuff)
-    local drugReviced = 0
-    if bool then
-         while backpackSpace ~= 0 do
+AddEventHandler("DRP_Drugs:DrugLocationPick", function(pick, auto, amountToGet, type, timeToDoStuff)
+    local sleeper = 100
+    local itemCounter = 0
+    if pick and auto then
+        while isPressed == false do 
             isActive = true
-            exports['drp_progressBars']:startUI(timeToDoStuff, "Picking "..type.." - X"..backpackSpace.." left")
+            exports['drp_progressBars']:startUI(timeToDoStuff, "Picking "..type.." - X"..amountToGet)
             TaskStartScenarioInPlace(PlayerPedId(), 'PROP_HUMAN_PARKING_METER', 0, true)
             Citizen.Wait(timeToDoStuff)
             ClearPedTasksImmediately(GetPlayerPed(-1))
+            TriggerServerEvent("DRP_Inventory:addInventoryItem", type, amountToGet)
             TriggerEvent("DRP_Core:Success", type, tostring("You got "..amountToGet.."g "..type),2500,false,"leftCenter")
-            print(tostring(backpackSpace))
-            Citizen.Wait(100)
-            backpackSpace = backpackSpace - amountToGet
-            drugReviced = drugReviced + amountToGet
+            itemCounter = itemCounter + amountToGet
             if isPressed then
-                TriggerServerEvent("DRP_Drugs:AmountWhenQuitAutoPick", drugReviced, backpackSpace, type)
-                Citizen.Wait(100)
-                backpackSpace = 0
-                ClearPedTasksImmediately(GetPlayerPed(-1))
+                TriggerEvent("DRP_Core:Info", type, tostring("You got "..itemCounter.."g "..type),2500,false,"leftCenter")
             end
+            Citizen.Wait(sleeper)
         end
+    elseif pick then
+        isActive = true
+        exports['drp_progressBars']:startUI(timeToDoStuff, "Picking "..type.." - X"..amountToGet)
+        TaskStartScenarioInPlace(PlayerPedId(), 'PROP_HUMAN_PARKING_METER', 0, true)
+        Citizen.Wait(timeToDoStuff)
+        ClearPedTasksImmediately(GetPlayerPed(-1))
+        TriggerServerEvent("DRP_Inventory:addInventoryItem", type, amountToGet)
+        TriggerEvent("DRP_Core:Success", type, tostring("You got "..amountToGet.."g "..type),2500,false,"leftCenter")
+        Citizen.Wait(sleeper)
     end
     isPressed = false
     isActive = false
 end)
 
-----------------------------------------------------------------------------------------------------------------------------------
------ FUCKING WORKS TOBY!! - DON'T TOUCH IT!!!!
-----------------------------------------------------------------------------------------------------------------------------------
 ----------------------------------------------------------------------------------------------------------------------------------
 ----- Drug locations.
 ----------------------------------------------------------------------------------------------------------------------------------
 Citizen.CreateThread(function()
     local sleepTimer = 1000
     while true do
-        for i=1, #DRPDrugs.Locations do
+        for k, v in pairs (drugLoactions) do
             local ped = PlayerPedId()
             local pedPos = GetEntityCoords(ped)
-            local distance = Vdist(pedPos.x, pedPos.y, pedPos.z, DRPDrugs.Locations[i].x, DRPDrugs.Locations[i].y, DRPDrugs.Locations[i].z)
-            if distance <= 1.0 then
+            local distance = Vdist(pedPos.x, pedPos.y, pedPos.z, v.x, v.y, v.z)
+            if distance <= 0.6 then
                 sleepTimer = 5
-                exports['drp_core']:DrawText3Ds(DRPDrugs.Locations[i].x, DRPDrugs.Locations[i].y, DRPDrugs.Locations[i].z + 0.5, tostring("~b~[E]~w~ Pick "..DRPDrugs.Locations[i].type.."\n~g~[Q]~w~ Keep picking "..DRPDrugs.Locations[i].type))
+                exports['drp_core']:DrawText3Ds(v.x, v.y, v.z + 0.5, tostring("~b~[E]~w~ Pick "..v.type.."\n~g~[Q]~w~ Keep picking "..v.type))
                 if isActive == false then
                     if IsControlJustPressed(1, 86) then
-                        TriggerServerEvent("DRP_Drugs:PickDrug", DRPDrugs.Locations[i].type)
+                        TriggerServerEvent("DRP_Drugs:PickDrug", v.type, true, false)
                     elseif IsControlJustPressed(1, 44)then
-                        TriggerServerEvent("DRP_Drugs:PickDrugAuto", DRPDrugs.Locations[i].type)
+                        TriggerServerEvent("DRP_Drugs:PickDrug", v.type, false, true)
                     end
                 end
             end
@@ -103,79 +113,97 @@ Citizen.CreateThread(function()
 end)
 
 ----------------------------------------------------------------------------------------------------------------------------------
------ Start production if backpack is not full and item is available.
+----- Start production
 ----------------------------------------------------------------------------------------------------------------------------------
 RegisterNetEvent("DRP_Drugs:DrugLocationProd")
-AddEventHandler("DRP_Drugs:DrugLocationProd", function(bool, amountToGet, type, canProduce, timeToDoStuff)
-    if bool then
-        isActive = true
-        exports['drp_progressBars']:startUI(timeToDoStuff, "Producing "..type.." - X"..canProduce.." left")
-        TaskStartScenarioInPlace(PlayerPedId(), 'PROP_HUMAN_PARKING_METER', 0, true)
-        Citizen.Wait(timeToDoStuff)
-        ClearPedTasksImmediately(GetPlayerPed(-1))
-        TriggerEvent("DRP_Core:Success", type, tostring("You got "..amountToGet.."g "..type),2500,false,"leftCenter")
-        print(tostring(canProduce))
-    end
-    isActive = false
-end)
-
-----------------------------------------------------------------------------------------------------------------------------------
------ Start auto producing if backpack is not full.
-----------------------------------------------------------------------------------------------------------------------------------
-RegisterNetEvent("DRP_Drugs:DrugLocationProdAuto")
-AddEventHandler("DRP_Drugs:DrugLocationProdAuto", function(bool, amountToGet, type, canProduce, timeToDoStuff)
-    local drugReviced = 0
-    if bool then
-         while canProduce ~= 0 do
+AddEventHandler("DRP_Drugs:DrugLocationProd", function(prod, auto, amountToGet, amountToProd, type, use, timeToDoStuff)
+    local sleeper = 100
+    local itemCounter = 0
+    if prod and auto then
+        while isPressed == false do 
             isActive = true
-            exports['drp_progressBars']:startUI(timeToDoStuff, "Producing "..type.." - X"..canProduce.." left")
+            exports['drp_progressBars']:startUI(timeToDoStuff, "Producing "..type.." - X"..amountToGet)
             TaskStartScenarioInPlace(PlayerPedId(), 'PROP_HUMAN_PARKING_METER', 0, true)
             Citizen.Wait(timeToDoStuff)
             ClearPedTasksImmediately(GetPlayerPed(-1))
+            TriggerServerEvent("DRP_Inventory:removeInventoryItem", use, amountToProd)
+            TriggerServerEvent("DRP_Inventory:addInventoryItem", type, amountToGet)
             TriggerEvent("DRP_Core:Success", type, tostring("You got "..amountToGet.."g "..type),2500,false,"leftCenter")
-            print(tostring(canProduce))
-            Citizen.Wait(100)
-            canProduce = canProduce - amountToGet
-            drugReviced = drugReviced + amountToGet
+            itemCounter = itemCounter + amountToGet
             if isPressed then
-                TriggerServerEvent("DRP_Drugs:AmountWhenQuitAutoProd", drugReviced, canProduce, type)
-                Citizen.Wait(100)
-                canProduce = 0
-                ClearPedTasksImmediately(GetPlayerPed(-1))
+                TriggerEvent("DRP_Core:Info", type, tostring("You got "..itemCounter.."g "..type),2500,false,"leftCenter")
             end
+            Citizen.Wait(sleeper)
         end
+    elseif prod then
+        isActive = true
+        exports['drp_progressBars']:startUI(timeToDoStuff, "Producing "..type.." - X"..amountToGet)
+        TaskStartScenarioInPlace(PlayerPedId(), 'PROP_HUMAN_PARKING_METER', 0, true)
+        Citizen.Wait(timeToDoStuff)
+        ClearPedTasksImmediately(GetPlayerPed(-1))
+        TriggerServerEvent("DRP_Inventory:addInventoryItem", type, amountToGet)
+        TriggerEvent("DRP_Core:Success", type, tostring("You got "..amountToGet.."g "..type),2500,false,"leftCenter")
+        Citizen.Wait(sleeper)
     end
     isPressed = false
     isActive = false
 end)
 
-----------------------------------------------------------------------------------------------------------------------------------
------ GOTTA BE REFACTORET! - Gotte simplify stuff before release
-----------------------------------------------------------------------------------------------------------------------------------
+
 ----------------------------------------------------------------------------------------------------------------------------------
 ----- Getting productions.
 ----------------------------------------------------------------------------------------------------------------------------------
 Citizen.CreateThread(function()
     local sleepTimer = 1000
     while true do
-        for i=1, #DRPDrugs.Productions do
+        for k, v in pairs (productionLocations) do
             local ped = PlayerPedId()
             local pedPos = GetEntityCoords(ped)
-            local distance = Vdist(pedPos.x, pedPos.y, pedPos.z, DRPDrugs.Productions[i].x, DRPDrugs.Productions[i].y, DRPDrugs.Productions[i].z)
+            local distance = Vdist(pedPos.x, pedPos.y, pedPos.z, v.x, v.y, v.z)
             if distance <= 2.0 then
                 sleepTimer = 5
-                exports['drp_core']:DrawText3Ds(DRPDrugs.Productions[i].x, DRPDrugs.Productions[i].y, DRPDrugs.Productions[i].z + 0.5, tostring("~b~[E]~w~ Produce "..DRPDrugs.Productions[i].type.."\n~g~[Q]~w~ Keep producing "..DRPDrugs.Productions[i].type))
+                exports['drp_core']:DrawText3Ds(v.x, v.y, v.z + 0.5, tostring("~b~[E]~w~ Produce "..v.type.."\n~g~[Q]~w~ Keep producing "..v.type))
                 if isActive == false then
                     if IsControlJustPressed(1, 86) then
-                        TriggerServerEvent("DRP_Drugs:ProdDrug", DRPDrugs.Productions[i].type)
+                        TriggerServerEvent("DRP_Drugs:ProdDrug", v.type, v.use, true, false) -- Produce one time
                     elseif IsControlJustPressed(1, 44) then
-                        TriggerServerEvent("DRP_Drugs:ProdDrugAuto", DRPDrugs.Productions[i].type)
+                        TriggerServerEvent("DRP_Drugs:ProdDrug", v.type, v.use, false, true) -- Jeep producing
                     end
                 end
             end
         end
         Citizen.Wait(sleepTimer)
     end
+end)
+
+
+RegisterNetEvent("DRP_Drugs:SellLocationDrug")
+AddEventHandler("DRP_Drugs:SellLocationDrug", function(sell, auto, amountToGet, price, type, timeToDoStuff)
+    local sleeper = 100
+    local itemCounter = 0
+    local cashRecived = 0
+    if sell and auto then
+        while isPressed == false do 
+            isActive = true
+            exports['drp_progressBars']:startUI(timeToDoStuff, "Selling "..type.." - X"..amountToGet)
+            TaskStartScenarioInPlace(PlayerPedId(), 'PROP_HUMAN_PARKING_METER', 0, true)
+            Citizen.Wait(timeToDoStuff)
+            ClearPedTasksImmediately(GetPlayerPed(-1))
+            TriggerServerEvent("DRP_Inventory:removeInventoryItem", type, amountToGet)
+            --- TriggerEvent("DRP", ) -----
+            TriggerEvent("DRP_Core:Success", type, tostring("You got "..price.."$ for "..amountToGet.."g "..type),2500,false,"leftCenter")
+            itemCounter = itemCounter + amountToGet
+            cashRecived = cashRecived + price
+            if isPressed then
+                TriggerEvent("DRP_Core:Info", type, tostring("You got "..cashRecived.."$ for "..itemCounter.."g "..type),2500,false,"leftCenter")
+            end
+            Citizen.Wait(sleeper)
+        end
+    elseif prod then
+        print("Hello Bob")
+    end
+    isPressed = false
+    isActive = false
 end)
 
 ----------------------------------------------------------------------------------------------------------------------------------
@@ -184,28 +212,17 @@ end)
 Citizen.CreateThread(function()
     local sleepTimer=1000
     while true do
-        for i=1, #DRPDrugs.SellLocations do
+        for k, v in pairs (sellLocations) do
             local ped = PlayerPedId()
             local pedPos = GetEntityCoords(ped)
-            local distance = Vdist(pedPos.x, pedPos.y, pedPos.z, DRPDrugs.SellLocations[i].x, DRPDrugs.SellLocations[i].y, DRPDrugs.SellLocations[i].z)
+            local distance = Vdist(pedPos.x, pedPos.y, pedPos.z, v.x, v.y, v.z)
             if distance <= 2.0 then
                 sleepTimer = 5
-                exports['drp_core']:DrawText3Ds(DRPDrugs.SellLocations[i].x, DRPDrugs.SellLocations[i].y, DRPDrugs.SellLocations[i].z + 0.5, tostring("~b~[E]~w~ Sell "..DRPDrugs.SellLocations[i].type.."\n~g~[Q]~w~ Keep selling "..DRPDrugs.SellLocations[i].type))
+                exports['drp_core']:DrawText3Ds(v.x, v.y, v.z + 0.5, tostring("~b~[E]~w~ Sell "..v.type.."\n~g~[Q]~w~ Keep selling "..v.type))
                 if IsControlJustPressed(1, 86) then
-                    exports['drp_progressBars']:startUI(time, "Selling "..DRPDrugs.SellLocations[i].type)
-                    TaskStartScenarioInPlace(PlayerPedId(), 'PROP_HUMAN_PARKING_METER', 0, true)
-                    Citizen.Wait(time)
-                    ClearPedTasksImmediately(GetPlayerPed(-1))
-                    --NEEDS TO BE CHANGED TO
-                    TriggerEvent("DRP_Core:Success", DRPDrugs.SellLocations[i].type, tostring("You got "..dirtyMoney.."$ for "..amountToGet.."g "..DRPDrugs.SellLocations[i].type),2500,false,"leftCenter")
+                    TriggerServerEvent("DRP_Drugs:SellDrug", v.type, v.price, true, false)
                 elseif IsControlJustPressed(1, 44) then
-                    --NEEDS TO BE CHANGED
-                    exports['drp_progressBars']:startUI(time, "Selling "..DRPDrugs.SellLocations[i].type)
-                    TaskStartScenarioInPlace(PlayerPedId(), 'PROP_HUMAN_PARKING_METER', 0, true)
-                    Citizen.Wait(time)
-                    ClearPedTasksImmediately(GetPlayerPed(-1))
-                    --NEEDS TO BE CHANGED TO
-                    TriggerEvent("DRP_Core:Success", DRPDrugs.SellLocations[i].type, tostring("You got "..dirtyMoney.."$ for "..amountToGet.."g "..DRPDrugs.SellLocations[i].type),2500,false,"leftCenter")
+                    TriggerServerEvent("DRP_Drugs:SellDrug", v.type, v.price, false, true)
                 end
             end
         end
@@ -217,19 +234,26 @@ end)
 ----- Peds for Drug sell locations.
 ----------------------------------------------------------------------------------------------------------------------------------
 Citizen.CreateThread(function()
-    local sleepTimer = 10
-    for i=1, #DRPDrugs.SellLocations do
+    local sleeper = 10
+    --for k,v in pairs(sellLocations) do
+    for i = 1, #DRPDrugs.SellLocations do
         local lmodel = (DRPDrugs.SellLocations[i].ishash) and DRPDrugs.SellLocations[i].model or GetHashKey(DRPDrugs.SellLocations[i].model)
-        RequestModel(lmodel)
+        RequestModel(DRPDrugs.SellLocations[i].ishash)
+        print(lmodel)
         while not HasModelLoaded(lmodel) do
-            Citizen.Wait(sleepTimer)
+            Wait(sleeper)
         end
-        local lPed = CreatePed(4, lmodel, DRPDrugs.SellLocations[i].x, DRPDrugs.SellLocations[i].y, DRPDrugs.SellLocations[i].z + -1.0, DRPDrugs.SellLocations[i].h, false, false)
+        local lPed = CreatePed(4, lmodel, DRPDrugs.SellLocations[i].x, DRPDrugs.SellLocations[i].y, DRPDrugs.SellLocations[i].z, DRPDrugs.SellLocations[i].h, false, false)
         SetEntityInvincible(lPed, true)
         FreezeEntityPosition(lPed, true)
         SetBlockingOfNonTemporaryEvents(lPed, true)
-        SetAmbientVoiceName(lPed, DRPDrugs.SellLocations[i].voice)
-        TaskStartScenarioInPlace(lPed, "WORLD_HUMAN_STAND_IMPATIENT_UPRIGHT", 0, 0)
+        --SetAmbientVoiceName(lPed, v.voice)
+        if v.dict ~= nil then
+            loadAnimDict(DRPDrugs.SellLocations[i].dict)
+            TaskPlayAnim(lPed, DRPDrugs.SellLocations[i].dict, false, 8.0, 0.0, -1, 1, 0, 0, 0, 0)
+        else
+            TaskStartScenarioInPlace(lPed, "WORLD_HUMAN_STAND_IMPATIENT_UPRIGHT", 0, 0)
+        end
         SetModelAsNoLongerNeeded(lmodel)
     end
 end)
