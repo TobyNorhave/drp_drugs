@@ -194,6 +194,7 @@ AddEventHandler("DRP_Drugs:DrugLocationProd", function(prod, auto, amountToGet, 
         TaskStartScenarioInPlace(PlayerPedId(), 'PROP_HUMAN_PARKING_METER', 0, true)
         Citizen.Wait(timeToDoStuff)
         ClearPedTasksImmediately(GetPlayerPed(-1))
+        TriggerServerEvent("DRP_Inventory:removeInventoryItem", use, amountToProd)
         TriggerServerEvent("DRP_Inventory:addInventoryItem", type, amountToGet)
         TriggerEvent("DRP_Core:Success", type, tostring("You got "..amountToGet.."g "..type),2500,false,"leftCenter")
         Citizen.Wait(sleeper)
@@ -232,7 +233,7 @@ AddEventHandler("DRP_Drugs:SellLocationDrug", function(sell, auto, amountToGet, 
             Citizen.Wait(timeToDoStuff)
             ClearPedTasksImmediately(GetPlayerPed(-1))
             TriggerServerEvent("DRP_Inventory:removeInventoryItem", type, amountToGet)
-            --- TriggerEvent("DRP", ) -----
+            TriggerServerEvent("DRP_Drugs:AddDirtyMoney", price)
             TriggerEvent("DRP_Core:Success", type, tostring("You got "..price.."$ for "..amountToGet.."g "..type),2500,false,"leftCenter")
             Citizen.Wait(sleeper)
     elseif auto then
@@ -243,11 +244,11 @@ AddEventHandler("DRP_Drugs:SellLocationDrug", function(sell, auto, amountToGet, 
             Citizen.Wait(timeToDoStuff)
             ClearPedTasksImmediately(GetPlayerPed(-1))
             TriggerServerEvent("DRP_Inventory:removeInventoryItem", type, amountToGet)
-            --- TriggerEvent("DRP", ) -----
             TriggerEvent("DRP_Core:Success", type, tostring("You got "..price.."$ for "..amountToGet.."g "..type),2500,false,"leftCenter")
             itemCounter = itemCounter + amountToGet
             cashRecived = cashRecived + price
             if isPressed then
+                TriggerServerEvent("DRP_Drugs:AddDirtyMoney", cashRecived)
                 TriggerEvent("DRP_Core:Info", type, tostring("You got "..cashRecived.."$ for "..itemCounter.."g "..type),2500,false,"leftCenter")
             end
             Citizen.Wait(sleeper)

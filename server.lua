@@ -54,3 +54,13 @@ AddEventHandler("DRP_Drugs:SellDrug", function(type, price, prod, auto)
         TriggerClientEvent("DRP_Drugs:SellLocationDrug", player.charid, false, true, amountToGet, price, type, timeToDoStuff)
     end
 end)
+
+----------------------------------------------------------------------------------------------------------------------------------
+----- Add dirty money after selling drugs.
+----------------------------------------------------------------------------------------------------------------------------------
+RegisterServerEvent("DRP_Drugs:AddDirtyMoney")
+AddEventHandler("DRP_Drugs:AddDirtyMoney", function(price)
+    local src = source
+    local player = exports["drp_id"]:GetCharacterData(src)
+    TriggerEvent("DRP_Bank:AddDirtyMoney", player, price)
+end)
