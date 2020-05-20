@@ -222,7 +222,6 @@ end, false)
 function showBlips(blips)
     for i = 1, #blips, 1 do
         local blip = AddBlipForCoord(blips[i].x, blips[i].y, blips[i].z)
-        print(blips[i].x)
         SetBlipSprite(blip, blips[i].blipId)
         SetBlipAsShortRange(blip, true)
         SetBlipScale(blip, 0.8)
@@ -251,17 +250,6 @@ function spawnPeds(dealer)
         SetAmbientVoiceName(lPed, dealer[a].voice)
         TaskStartScenarioInPlace(lPed, "WORLD_HUMAN_STAND_IMPATIENT_UPRIGHT", 0, 0)
         SetModelAsNoLongerNeeded(lmodel)
-    end
-end
-
------------------------- WIP!!! ------------------------------
-function checkInv(type, amount)
-    sleeper = 1
-    local src = source
-    while true do
-        DRP.NetCallbacks.Trigger("DRP_Inventory:CharacterInventory", function() 
-            
-        end)
     end
 end
 

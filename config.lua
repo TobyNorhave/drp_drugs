@@ -51,9 +51,6 @@ DRPDrugs.Productions = { -- { x= , y= , z= , type= "TYPEOFDRUG", use= "USED_TO_P
 ----------------------------------------------------------------------------------------------------------------------------------
 ----- Set peds for drug dealing. Remember to set blips accordingly in `client.lua`. (If you will)
 ----------------------------------------------------------------------------------------------------------------------------------
-DRPDrugs.SellLocations = { -- { x= , y= , z= , type= "TYPEOFDRUG", price = PRICE_PR_DRUG}
-    --{model= "0xe497bbef", voice="S_M_M_HAIRDRESSER_01_BLACK_MINI_01", x =-1645.5, y =-986.61, z = 7.33, h = 4.18, type = "Coke", price = 120},
-    {ishash=true, model= "g_m_y_armgoon_02", dict="mini@strip_club@idles@bouncer@base", anim="base", voice="S_M_M_HAIRDRESSER_01_BLACK_MINI_01", coords={x = -1645.5, y = -986.61, z = 7.33, h = 4.18}, type = "Coke", price = 120}
-    -- h = 4.18, model= "a_m_m_og_boss_01", voice="S_M_M_HAIRDRESSER_01_BLACK_MINI_01",
-    --{ishash=true, model= 0xe497bbef, dict="mini@strip_club@idles@bouncer@base", anim="base", voice="S_M_M_HAIRDRESSER_01_BLACK_MINI_01", type = "Coke", price = 120, coords={-1645.63,-971.08,7.69,3.45}}
+DRPDrugs.SellLocations = { -- { model= "PED_MODEL (NOT HASH)", voice="PED_VOICE", coords={x = , y = , z = , h = }, type = "DRUG_TYPE", price = DRUG_PRICE }
+    {model= "g_m_y_armgoon_02", voice="S_M_M_HAIRDRESSER_01_BLACK_MINI_01", coords={x = -1645.5, y = -986.61, z = 7.33, h = 4.18}, type = "Coke", price = 120}
 }
