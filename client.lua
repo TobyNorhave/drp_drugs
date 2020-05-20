@@ -23,7 +23,7 @@ end)
 ----- Drug locations Thread.
 ----------------------------------------------------------------------------------------------------------------------------------
 Citizen.CreateThread(function()
-    local sleepTimer = 1000
+    local sleeper = 100
     while true do
         for i = 1, #drugLoactions, 1 do
             local ped = PlayerPedId()
@@ -41,7 +41,7 @@ Citizen.CreateThread(function()
                 end
             end
         end
-        Citizen.Wait(sleepTimer)
+        Citizen.Wait(sleeper)
     end
 end)
 
@@ -49,14 +49,14 @@ end)
 ----- Getting productions Thread.
 ----------------------------------------------------------------------------------------------------------------------------------
 Citizen.CreateThread(function()
-    local sleepTimer = 1000
+    local sleeper = 100
     while true do
         for i = 1, #productionLocations, 1 do
             local ped = PlayerPedId()
             local pedPos = GetEntityCoords(ped)
             local distance = Vdist(pedPos.x, pedPos.y, pedPos.z, productionLocations[i].x, productionLocations[i].y, productionLocations[i].z)
             if distance <= 2.0 then
-                sleepTimer = 5
+                sleeper = 5
                 DrawText3Ds(productionLocations[i].x, productionLocations[i].y, productionLocations[i].z + 0.5, tostring("~b~[E]~w~ Produce "..productionLocations[i].type.."\n~g~[Q]~w~ Keep producing "..productionLocations[i].type))
                 if isActive == false then
                     if IsControlJustPressed(1, 86) then
@@ -67,7 +67,7 @@ Citizen.CreateThread(function()
                 end
             end
         end
-        Citizen.Wait(sleepTimer)
+        Citizen.Wait(sleeper)
     end
 end)
 
@@ -75,14 +75,14 @@ end)
 ----- Getting sell locations Thread.
 ----------------------------------------------------------------------------------------------------------------------------------
 Citizen.CreateThread(function()
-    local sleepTimer=1000
+    local sleeper = 100
     while true do
         for i = 1, #sellLocations, 1 do
             local ped = PlayerPedId()
             local pedPos = GetEntityCoords(ped)
             local distance = Vdist(pedPos.x, pedPos.y, pedPos.z, sellLocations[i].coords.x, sellLocations[i].coords.y, sellLocations[i].coords.z)
             if distance <= 2.0 then
-                sleepTimer = 5
+                sleeper = 5
                 DrawText3Ds(sellLocations[i].coords.x, sellLocations[i].coords.y, sellLocations[i].coords.z + 0.5, tostring("~b~[E]~w~ Sell "..sellLocations[i].type.."\n~g~[Q]~w~ Keep selling "..sellLocations[i].type))
                 if IsControlJustPressed(1, 86) then
                     TriggerServerEvent("DRP_Drugs:SellDrug", sellLocations[i].type, sellLocations[i].price, true, false)
@@ -91,7 +91,7 @@ Citizen.CreateThread(function()
                 end
             end
         end
-        Citizen.Wait(sleepTimer)
+        Citizen.Wait(sleeper)
     end
 end)
 
@@ -145,6 +145,7 @@ AddEventHandler("DRP_Drugs:DrugLocationProd", function(prod, auto, amountToGet, 
         Citizen.Wait(timeToDoStuff)
         ClearPedTasksImmediately(GetPlayerPed(-1))
         TriggerServerEvent("DRP_Inventory:removeInventoryItem", use, amountToProd)
+        exports['DRP_Inventory']:InvRemove(yeet)
         TriggerServerEvent("DRP_Inventory:addInventoryItem", type, amountToGet)
         TriggerEvent("DRP_Core:Success", type, tostring("You got "..amountToGet.."g "..type),2500,false,"leftCenter")
         Citizen.Wait(sleeper)

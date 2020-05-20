@@ -18,7 +18,7 @@ end)
 ----------------------------------------------------------------------------------------------------------------------------------
 ----- Pick drug from location.
 ----------------------------------------------------------------------------------------------------------------------------------
-RegisterServerEvent("DRP_Drugs:PickDrug")
+RegisterNetEvent("DRP_Drugs:PickDrug")
 AddEventHandler("DRP_Drugs:PickDrug", function(type, pick, auto)
     local src = source
     local player = exports["drp_id"]:GetCharacterData(src)
@@ -32,7 +32,7 @@ end)
 ----------------------------------------------------------------------------------------------------------------------------------
 ----- Produce drug from location.
 ----------------------------------------------------------------------------------------------------------------------------------
-RegisterServerEvent("DRP_Drugs:ProdDrug")
+RegisterNetEvent("DRP_Drugs:ProdDrug")
 AddEventHandler("DRP_Drugs:ProdDrug", function(type, use, prod, auto)
     local src = source
     local player = exports["drp_id"]:GetCharacterData(src)
@@ -46,7 +46,7 @@ end)
 ----------------------------------------------------------------------------------------------------------------------------------
 ----- Sell drugs to dealer.
 ----------------------------------------------------------------------------------------------------------------------------------
-RegisterServerEvent("DRP_Drugs:SellDrug")
+RegisterNetEvent("DRP_Drugs:SellDrug")
 AddEventHandler("DRP_Drugs:SellDrug", function(type, price, prod, auto)
     local src = source
     local player = exports["drp_id"]:GetCharacterData(src)
@@ -60,7 +60,7 @@ end)
 ----------------------------------------------------------------------------------------------------------------------------------
 ----- Add dirty money after selling drugs.
 ----------------------------------------------------------------------------------------------------------------------------------
-RegisterServerEvent("DRP_Drugs:AddDirtyMoney")
+RegisterNetEvent("DRP_Drugs:AddDirtyMoney")
 AddEventHandler("DRP_Drugs:AddDirtyMoney", function(price)
     local src = source
     local player = exports["drp_id"]:GetCharacterData(src)
