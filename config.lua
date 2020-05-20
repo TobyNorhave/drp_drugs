@@ -2,6 +2,7 @@ DRPDrugs = {}
 ----------------------------------------------------------------------------------------------------------------------------------
 ----- NEEDS TO BE HERE!!
 ----------------------------------------------------------------------------------------------------------------------------------
+DRPDrugs.Blips = {}
 DRPDrugs.Locations = {} -- DON'T TOUCH
 DRPDrugs.Productions = {} -- DON'T TOUCH
 DRPDrugs.SellLocations = {} -- DON'T TOUCH
@@ -12,6 +13,14 @@ DRPDrugs.SellLocations = {} -- DON'T TOUCH
 DRPDrugs.AmountYouGet = 1 -- This is the amount you get when you pick/produce the drug.
 DRPDrugs.AmountToProduceOne = 2 -- This is the amount it takes to produce one drug.
 DRPDrugs.TimeToPickProduceSell = 2500 -- This is the time it takes to Pick, Produce, And sell in msec.
+
+----------------------------------------------------------------------------------------------------------------------------------
+----- Set blips on the map - Give it a ID and name.
+----------------------------------------------------------------------------------------------------------------------------------
+DRPDrugs.Blips = {
+    {x =360.27, y =6479.0, z =29.36, blipId = 403, name = "Coke Field"},
+    {x = 1391.89, y =3605.6, z =38.94, blipId = 514, name = "Coke Production"}
+}
 
 ----------------------------------------------------------------------------------------------------------------------------------
 ----- Set drug locations. Remember to set blips accordingly in `client.lua`. And add item to Inventory!!
@@ -43,7 +52,8 @@ DRPDrugs.Productions = { -- { x= , y= , z= , type= "TYPEOFDRUG", use= "USED_TO_P
 ----- Set peds for drug dealing. Remember to set blips accordingly in `client.lua`. (If you will)
 ----------------------------------------------------------------------------------------------------------------------------------
 DRPDrugs.SellLocations = { -- { x= , y= , z= , type= "TYPEOFDRUG", price = PRICE_PR_DRUG}
-    {x =-1645.5, y =-986.61, z = 7.33, type = "Coke", price = 120},
+    --{model= "0xe497bbef", voice="S_M_M_HAIRDRESSER_01_BLACK_MINI_01", x =-1645.5, y =-986.61, z = 7.33, h = 4.18, type = "Coke", price = 120},
+    {ishash=true, model= "g_m_y_armgoon_02", dict="mini@strip_club@idles@bouncer@base", anim="base", voice="S_M_M_HAIRDRESSER_01_BLACK_MINI_01", coords={x = -1645.5, y = -986.61, z = 7.33, h = 4.18}, type = "Coke", price = 120}
     -- h = 4.18, model= "a_m_m_og_boss_01", voice="S_M_M_HAIRDRESSER_01_BLACK_MINI_01",
     --{ishash=true, model= 0xe497bbef, dict="mini@strip_club@idles@bouncer@base", anim="base", voice="S_M_M_HAIRDRESSER_01_BLACK_MINI_01", type = "Coke", price = 120, coords={-1645.63,-971.08,7.69,3.45}}
 }

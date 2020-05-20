@@ -7,10 +7,12 @@ local timeToDoStuff = DRPDrugs.TimeToPickProduceSell
 ----------------------------------------------------------------------------------------------------------------------------------
 RegisterNetEvent("DRP_Drugs:InitAll")
 AddEventHandler("DRP_Drugs:InitAll", function()
+    local src = source
+    local blip = DRPDrugs.Blips
     local drug = DRPDrugs.Locations
     local prod = DRPDrugs.Productions
     local sell = DRPDrugs.SellLocations
-    TriggerClientEvent("DRP_Drugs:Init", source, drug, prod, sell)
+    TriggerClientEvent("DRP_Drugs:Init", src, blip, drug, prod, sell)
 end)
 
 ----------------------------------------------------------------------------------------------------------------------------------
