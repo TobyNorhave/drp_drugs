@@ -11,6 +11,7 @@ Become a criminal. Pick as many drugs as you can carry.. Produce the drug you pi
 - [Features](#features)
 - [FAQ](#faq)
 - [Support](#support)
+- [Thanks to](#thanks)
 - [License](#license)
 
 ---
@@ -41,7 +42,7 @@ Become a criminal. Pick as many drugs as you can carry.. Produce the drug you pi
 
 # Features
 
-> HINT! - Edit the `config.lua` in the `drp_drugs` folder, for this section ;)
+> HINT! - Edit the `config.lua` in the `drp_drugs` folder, for this section ;) - More info can be found in the `config.lua`.
 
 - **Customizable blips! 🔞** - Set as many blips as you want! | (Drug and production location) Mabye dealer location?.. You decide! 😉
 
@@ -53,14 +54,14 @@ Become a criminal. Pick as many drugs as you can carry.. Produce the drug you pi
 
 - **Customizable production amount! 🔥** - Choose how much you get for producing one item! | (1, 2, 5, 10)
 
-- **Customizable production cost!** - Choose how much it costs to produce one drug! | (1, 2, 3, 5, 10) ???MABYE NEEDS TO BE REMOVED???
+- **Customizable production cost!** - Choose how much it costs to produce one drug! | (1, 2, 3, 5, 10) 
 
 - **Customizable time to pick, produce and sell! ⌛** - Decide how long it should take to pick, produce and sell one drug!
 
 ---
 
 # FAQ
-> My dog ate the FAQ section.. Sorry guys :(
+> My dog, cat & gf ate the FAQ section.. Sorry guys :(
 
 ---
 
@@ -70,6 +71,10 @@ Become a criminal. Pick as many drugs as you can carry.. Produce the drug you pi
 - ***I WONT DO ANY PERSONAL SUPPORT*** - If you know how to get DRP up and running, then this should be easy peasy ;) 
 
 ---
+
+# Thanks to
+- Darkzy for the help with the ped fix!
+- Scrubz for the help with optimizing the 3D's text!
 
 # License
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
