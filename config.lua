@@ -23,7 +23,7 @@ DRPDrugs.Blips = {
 }
 
 ----------------------------------------------------------------------------------------------------------------------------------
------ Set drug locations. Remember to set blips accordingly in `client.lua`. And add item to Inventory!!
+----- Set drug locations. Remember to add item to `inventoryItems.lua`!!!
 ----------------------------------------------------------------------------------------------------------------------------------
 DRPDrugs.Locations = { -- { x= , y= , z= , type= "TYPE_OF_DRUG"} 
     {x=363.41296386718, y=6483.2626953125, z=29.18021774292, type = "Cokeleaf"},
@@ -42,14 +42,14 @@ DRPDrugs.Locations = { -- { x= , y= , z= , type= "TYPE_OF_DRUG"}
 }
 
 ----------------------------------------------------------------------------------------------------------------------------------
------ Set production sites. Remember to set blips accordingly in `client.lua`.
+----- Set production sites. Remember to set blips accordingly!
 ----------------------------------------------------------------------------------------------------------------------------------
 DRPDrugs.Productions = { -- { x= , y= , z= , type= "TYPEOFDRUG", use= "USED_TO_PRODUCE_DRUG"}
     {x = 1391.89, y =3605.6, z =38.94, type = "Coke", use = "Cokeleaf"}
 }
 
 ----------------------------------------------------------------------------------------------------------------------------------
------ Set peds for drug dealing. Remember to set blips accordingly in `client.lua`. (If you will)
+----- Set peds for drug dealing. Remember to set blips accordingly! (If you will)
 ----------------------------------------------------------------------------------------------------------------------------------
 DRPDrugs.SellLocations = { -- { model= "PED_MODEL (NOT HASH)", voice="PED_VOICE", coords={x = , y = , z = , h = }, type = "DRUG_TYPE", price = DRUG_PRICE }
     {model= "g_m_y_armgoon_02", voice="S_M_M_HAIRDRESSER_01_BLACK_MINI_01", coords={x = -1645.5, y = -986.61, z = 7.33, h = 4.18}, type = "Coke", price = 120}
