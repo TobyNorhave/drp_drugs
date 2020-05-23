@@ -235,12 +235,3 @@ end)
 RegisterCommand("stop", function()
     isPressed = true
 end, false)
-
-function selling(timeToDoStuff, type, amountToGet, price) 
-    exports['drp_progressBars']:startUI(timeToDoStuff, "Selling "..type.." - X"..amountToGet)
-    TaskStartScenarioInPlace(PlayerPedId(), 'PROP_HUMAN_PARKING_METER', 0, true)
-    Citizen.Wait(timeToDoStuff)
-    ClearPedTasksImmediately(GetPlayerPed(-1))
-    TriggerServerEvent("DRP_Drugs:AddDirtyMoney", price)
-    TriggerEvent("DRP_Core:Success", type, tostring("You got "..price.."$ for "..amountToGet.."g "..type),2500,false,"leftCenter")
-end
