@@ -147,7 +147,7 @@ AddEventHandler("DRP_Drugs:DrugLocationProd", function(prod, auto, amountToGet, 
     if prod then
         isActive = true
         TriggerServerEvent("DRP_Drugs:CheckInv", use, amountToProd)
-        Citizen.Wait(500)
+        Citizen.Wait(300)
         if isGoodToGo then
             exports['drp_progressBars']:startUI(timeToDoStuff, "Producing "..type.." - X"..amountToGet)
             TaskStartScenarioInPlace(PlayerPedId(), 'PROP_HUMAN_PARKING_METER', 0, true)
@@ -161,7 +161,7 @@ AddEventHandler("DRP_Drugs:DrugLocationProd", function(prod, auto, amountToGet, 
         while isPressed == false do 
             isActive = true
             TriggerServerEvent("DRP_Drugs:CheckInv", use, amountToProd)
-            Citizen.Wait(500)
+            Citizen.Wait(300)
             if isGoodToGo then
                 exports['drp_progressBars']:startUI(timeToDoStuff, "Producing "..type.." - X"..amountToGet)
                 TaskStartScenarioInPlace(PlayerPedId(), 'PROP_HUMAN_PARKING_METER', 0, true)
