@@ -66,3 +66,19 @@ AddEventHandler("DRP_Drugs:AddDirtyMoney", function(price)
     local player = exports["drp_id"]:GetCharacterData(src)
     TriggerEvent("DRP_Bank:AddDirtyMoney", player, price)
 end)
+
+
+RegisterServerEvent("DRP_Drugs:CheckInv")
+AddEventHandler("DRP_Drugs:CheckInv", function(item, amount)
+    local src = source
+    local player = exports["drp_id"]:GetCharacterData(src)
+    local items = exports['drp_inventory']:GetItem(player, item)
+    print(items)
+    if items == nil then
+        TriggerClientEvent("DRP_Core:Error", src, "Inventory", tostring("Boom boom bommmmmm...."), 2500, false, "leftCenter")
+    elseif items >= amount then
+        TriggerClientEvent("DRP_Core:Error", src, "Inventory", tostring('You used '..item), 2500, false, "leftCenter")
+        TriggerEvent("DRP_Inventory:removeInventoryItem", item, amount, src)
+        TriggerClientEvent("DRP_Drugs:GoodToGo", player.charid, true)
+    end
+end)
