@@ -31,18 +31,18 @@ end)
 Citizen.CreateThread(function()
     local sleeper = 1000
     while true do
-        for k, v in pairs(drugLoactions) do
+        for i = 1, #drugLoactions do
             local ped = PlayerPedId()
             local pedPos = GetEntityCoords(ped)
-            local distance = Vdist(pedPos.x, pedPos.y, pedPos.z, v.x, v.y, v.z)
+            local distance = Vdist(pedPos.x, pedPos.y, pedPos.z, drugLoactions[i].x, drugLoactions[i].y, drugLoactions[i].z)
             if distance <= 0.6 then
                 sleeper = 5
-                DrawText3Ds(v.x, v.y, v.z + 0.5, tostring("~b~[E]~w~ Pick "..v.type.."\n~g~[Q]~w~ Keep picking "..v.type))
-                if isActive == false then
+                DrawText3Ds(drugLoactions[i].x, drugLoactions[i].y, drugLoactions[i].z + 0.5, tostring("~b~[E]~w~ Pick "..drugLoactions[i].type.."\n~g~[Q]~w~ Keep picking "..drugLoactions[i].type))
+                if not isActive then
                     if IsControlJustPressed(1, 86) then
-                        TriggerServerEvent("DRP_Drugs:PickDrug", v.type, true, false)
+                        TriggerServerEvent("DRP_Drugs:PickDrug", drugLoactions[i].type, true, false)
                     elseif IsControlJustPressed(1, 44)then
-                        TriggerServerEvent("DRP_Drugs:PickDrug", v.type, false, true)
+                        TriggerServerEvent("DRP_Drugs:PickDrug", drugLoactions[i].type, false, true)
                     end
                 end
             end
@@ -57,18 +57,18 @@ end)
 Citizen.CreateThread(function()
     local sleeper = 1000
     while true do
-        for k, v in pairs(productionLocations) do
+        for i = 1, #productionLocations do
             local ped = PlayerPedId()
             local pedPos = GetEntityCoords(ped)
-            local distance = Vdist(pedPos.x, pedPos.y, pedPos.z, v.x, v.y, v.z)
+            local distance = Vdist(pedPos.x, pedPos.y, pedPos.z, productionLocations[i].x, productionLocations[i].y, productionLocations[i].z)
             if distance <= 2.0 then
                 sleeper = 5
-                DrawText3Ds(v.x, v.y, v.z + 0.5, tostring("~b~[E]~w~ Produce "..v.type.."\n~g~[Q]~w~ Keep producing "..v.type))
-                if isActive == false then
+                DrawText3Ds(productionLocations[i].x, productionLocations[i].y, productionLocations[i].z + 0.5, tostring("~b~[E]~w~ Produce "..productionLocations[i].type.."\n~g~[Q]~w~ Keep producing "..productionLocations[i].type))
+                if not isActive then
                     if IsControlJustPressed(1, 86) then
-                        TriggerServerEvent("DRP_Drugs:ProdDrug", v.type, v.use, true, false) -- Produce one time
+                        TriggerServerEvent("DRP_Drugs:ProdDrug", productionLocations[i].type, productionLocations[i].use, true, false) -- Produce one time
                     elseif IsControlJustPressed(1, 44) then
-                        TriggerServerEvent("DRP_Drugs:ProdDrug", v.type, v.use, false, true) -- Keep producing
+                        TriggerServerEvent("DRP_Drugs:ProdDrug", productionLocations[i].type, productionLocations[i].use, false, true) -- Keep producing
                     end
                 end
             end
@@ -83,17 +83,19 @@ end)
 Citizen.CreateThread(function()
     local sleeper = 1000
     while true do
-        for k, v in pairs(sellLocations) do
+        for i = 1, #sellLocations do
             local ped = PlayerPedId()
             local pedPos = GetEntityCoords(ped)
-            local distance = Vdist(pedPos.x, pedPos.y, pedPos.z, v.coords.x, v.coords.y, v.coords.z)
+            local distance = Vdist(pedPos.x, pedPos.y, pedPos.z, sellLocations[i].coords.x, sellLocations[i].coords.y, sellLocations[i].coords.z)
             if distance <= 2.0 then
                 sleeper = 5
-                DrawText3Ds(v.coords.x, v.coords.y, v.coords.z + 0.5, tostring("~b~[E]~w~ Sell "..v.type.."\n~g~[Q]~w~ Keep selling "..v.type))
-                if IsControlJustPressed(1, 86) then
-                    TriggerServerEvent("DRP_Drugs:SellDrug", v.type, v.price, true, false)
-                elseif IsControlJustPressed(1, 44) then
-                    TriggerServerEvent("DRP_Drugs:SellDrug", v.type, v.price, false, true)
+                DrawText3Ds(sellLocations[i].coords.x, sellLocations[i].coords.y, sellLocations[i].coords.z + 0.5, tostring("~b~[E]~w~ Sell "..sellLocations[i].type.."\n~g~[Q]~w~ Keep selling "..sellLocations[i].type))
+                if not isActive then
+                    if IsControlJustPressed(1, 86) then
+                        TriggerServerEvent("DRP_Drugs:SellDrug", sellLocations[i].type, sellLocations[i].price, true, false)
+                    elseif IsControlJustPressed(1, 44) then
+                        TriggerServerEvent("DRP_Drugs:SellDrug", sellLocations[i].type, sellLocations[i].price, false, true)
+                    end
                 end
             end
         end
@@ -118,7 +120,7 @@ AddEventHandler("DRP_Drugs:DrugLocationPick", function(pick, auto, amountToGet, 
         TriggerEvent("DRP_Core:Success", type, tostring("You got "..amountToGet.."g "..type),2500,false,"leftCenter")
         Citizen.Wait(sleeper)
     elseif auto then
-        while isPressed == false do 
+        while not isPressed do 
             isActive = true
             exports['drp_progressBars']:startUI(timeToDoStuff, "Picking "..type.." - X"..amountToGet)
             TaskStartScenarioInPlace(PlayerPedId(), 'PROP_HUMAN_PARKING_METER', 0, true)
@@ -158,7 +160,7 @@ AddEventHandler("DRP_Drugs:DrugLocationProd", function(prod, auto, amountToGet, 
             Citizen.Wait(sleeper)
         end
     elseif auto then
-        while isPressed == false do 
+        while not isPressed do 
             isActive = true
             TriggerServerEvent("DRP_Drugs:CheckInv", use, amountToProd)
             Citizen.Wait(300)
@@ -204,7 +206,7 @@ AddEventHandler("DRP_Drugs:SellLocationDrug", function(sell, auto, amountToGet, 
             Citizen.Wait(sleeper)
         end
     elseif auto then
-        while isPressed == false do 
+        while not isPressed do 
             isActive = true
             TriggerServerEvent("DRP_Drugs:CheckInv", type, amountToGet)
             Citizen.Wait(500)
